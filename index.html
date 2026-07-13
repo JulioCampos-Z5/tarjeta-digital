@@ -10,7 +10,12 @@
   <meta property="og:type" content="website" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💠</text></svg>" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="vendor/qrcode.min.js"></script>
+  <style>
+    /* qrcodejs dibuja canvas+img con tamaño fijo; los ajustamos al contenedor */
+    #qr canvas, #qr img { width: 100% !important; height: 100% !important; display: block; }
+    #qr img { image-rendering: pixelated; }
+  </style>
   <script>
     tailwind.config = {
       theme: {
@@ -128,7 +133,7 @@
           <!-- ── Columna derecha: QR ───────────────────────────────── -->
           <aside class="flex min-w-0 flex-col items-center justify-center gap-4 bg-slate-900 p-5 text-center sm:p-8">
             <div class="rounded-2xl bg-white p-3 shadow-xl shadow-black/40">
-              <canvas id="qr" class="block h-32 w-32 sm:h-36 sm:w-36" aria-label="Código QR de la tarjeta digital de Zincosoft"></canvas>
+              <div id="qr" class="h-32 w-32 sm:h-36 sm:w-36" role="img" aria-label="Código QR de la tarjeta digital de Zincosoft"></div>
             </div>
             <p class="text-[11px] font-medium uppercase tracking-widest text-slate-500">Escanea para guardar</p>
 
@@ -171,27 +176,18 @@
     $('t-tel').textContent    = DATOS.telefono;
     $('t-web').textContent    = DATOS.web.replace(/^https?:\/\//, '');
 
-    // QR con la URL de la tarjeta. Si el CDN principal no cargó, se intenta uno de respaldo.
-    function pintarQR() {
-      QRCode.toCanvas($('qr'), urlTarjeta, {
-        width: 288, margin: 1, errorCorrectionLevel: 'M',
-        color: { dark: '#0F172A', light: '#FFFFFF' }
-      }, (err) => { if (err) fallaQR(); });
-    }
-
-    function fallaQR() {
-      const c = $('qr');
-      c.outerHTML = '<p class="flex h-32 w-32 items-center justify-center p-2 text-center text-[11px] font-medium leading-snug text-slate-500 sm:h-36 sm:w-36">No se pudo generar el QR (sin conexión)</p>';
-    }
-
+    // QR con la URL de la tarjeta (librería servida desde vendor/, sin depender de un CDN)
     if (typeof QRCode !== 'undefined') {
-      pintarQR();
+      new QRCode($('qr'), {
+        text: urlTarjeta,
+        width: 288,
+        height: 288,
+        colorDark: '#0F172A',
+        colorLight: '#FFFFFF',
+        correctLevel: QRCode.CorrectLevel.M
+      });
     } else {
-      const respaldo = document.createElement('script');
-      respaldo.src = 'https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js';
-      respaldo.onload = pintarQR;
-      respaldo.onerror = fallaQR;
-      document.head.appendChild(respaldo);
+      $('qr').innerHTML = '<p class="flex h-full w-full items-center justify-center p-2 text-center text-[11px] font-medium leading-snug text-slate-500">No se pudo cargar el generador de QR</p>';
     }
 
     $('btn-vcard').addEventListener('click', () => {
