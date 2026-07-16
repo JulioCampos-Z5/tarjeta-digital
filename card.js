@@ -37,7 +37,8 @@ function vcard(d) {
     d.telTel ? `TEL;TYPE=CELL:${d.telTel}` : '',
     d.correo ? `EMAIL;TYPE=WORK:${d.correo}` : '',
     d.web ? `URL:${d.web}` : '',
-    `NOTE:${LEMA}`,
+    // Sin emoji: qrcodejs falla al codificar caracteres fuera de ASCII.
+    `NOTE:${LEMA.replace(/[^\x20-\x7E]/g, '').trim()}`,
     'END:VCARD'
   ].filter(Boolean).join('\r\n');
 }
@@ -130,7 +131,14 @@ function render() {
   const qrEl = document.getElementById('qr');
   const texto = d.qr === 'web' ? (d.web || WEB) : vcard(d);
   if (typeof QRCode !== 'undefined') {
-    new QRCode(qrEl, { text: texto, width: 288, height: 288, colorDark: '#0a0a0a', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M });
+    const opciones = (nivel) => ({ text: texto, width: 288, height: 288, colorDark: '#0a0a0a', colorLight: '#FFFFFF', correctLevel: nivel });
+    try {
+      new QRCode(qrEl, opciones(QRCode.CorrectLevel.M));
+    } catch (e) {
+      // Respaldo: nivel L admite más datos si la vCard es larga.
+      try { new QRCode(qrEl, opciones(QRCode.CorrectLevel.L)); }
+      catch (e2) { qrEl.innerHTML = '<p class="flex h-full w-full items-center justify-center p-2 text-center text-[11px] text-neutral-500">QR no disponible</p>'; }
+    }
   } else {
     qrEl.innerHTML = '<p class="flex h-full w-full items-center justify-center p-2 text-center text-[11px] text-neutral-500">QR no disponible</p>';
   }

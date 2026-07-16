@@ -1,5 +1,5 @@
 /* Service Worker — Zyncosoft Tarjetas Digitales */
-const CACHE = 'zyncosoft-tarjetas-v1';
+const CACHE = 'zyncosoft-tarjetas-v2';
 
 // Recursos locales que precargamos para que las tarjetas funcionen offline.
 const ASSETS = [
