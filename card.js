@@ -119,7 +119,7 @@ function render() {
         <div class="rounded-2xl bg-white p-3 shadow-xl shadow-black/40">
           <div id="qr" class="h-32 w-32 sm:h-36 sm:w-36" role="img" aria-label="Código QR de ${esc(d.nombre)}"></div>
         </div>
-        <p class="text-[11px] font-medium uppercase tracking-widest text-neutral-500">${d.qr === 'web' ? 'Escanea para visitar' : 'Escanea para guardar'}</p>
+        <p class="text-[11px] font-medium uppercase tracking-widest text-neutral-500">Escanea para abrir la tarjeta</p>
         <div class="flex w-full max-w-xs flex-col gap-2">
           <button id="btn-vcard" class="rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-neutral-950 transition hover:bg-brand-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300">Guardar contacto</button>
           <button id="btn-share" class="rounded-lg border border-white/15 bg-neutral-800 px-4 py-3 text-sm font-semibold text-neutral-300 transition hover:bg-neutral-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400">Compartir</button>
@@ -127,9 +127,10 @@ function render() {
       </aside>
     </div>`;
 
-  // QR
+  // QR → siempre lleva a la URL de esta misma tarjeta
   const qrEl = document.getElementById('qr');
-  const texto = d.qr === 'web' ? (d.web || WEB) : vcard(d);
+  const urlActual = location.href.split('#')[0];
+  const texto = urlActual.startsWith('http') ? urlActual : (d.web || WEB);
   if (typeof QRCode !== 'undefined') {
     const opciones = (nivel) => ({ text: texto, width: 288, height: 288, colorDark: '#0a0a0a', colorLight: '#FFFFFF', correctLevel: nivel });
     try {
