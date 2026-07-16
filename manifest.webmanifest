@@ -1,0 +1,14 @@
+{
+  "name": "Zyncosoft — Tarjetas Digitales",
+  "short_name": "Zyncosoft",
+  "description": "Tarjetas de presentación digital de Zyncosoft y su equipo.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    { "src": "/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" }
+  ]
+}
