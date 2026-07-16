@@ -1,5 +1,7 @@
-/* Service Worker — Zyncosoft Tarjetas Digitales */
-const CACHE = 'zyncosoft-tarjetas-v2';
+/* Service Worker — Zyncosoft Tarjetas Digitales
+   Estrategia "red primero": con internet siempre muestra lo más reciente;
+   la caché solo se usa como respaldo cuando no hay conexión. */
+const CACHE = 'zyncosoft-tarjetas-v3';
 
 // Recursos locales que precargamos para que las tarjetas funcionen offline.
 const ASSETS = [
@@ -18,7 +20,6 @@ const ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE)
-      // addAll falla si un recurso da 404; los agregamos tolerando fallos.
       .then((cache) => Promise.allSettled(ASSETS.map((url) => cache.add(url))))
       .then(() => self.skipWaiting())
   );
@@ -35,26 +36,21 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
+  if (new URL(req.url).origin !== location.origin) return; // deja pasar CDNs, etc.
 
-  // Navegaciones: red primero, con respaldo a la caché (buen offline).
-  if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req).catch(() => caches.match(req).then((r) => r || caches.match('/index.html')))
-    );
-    return;
-  }
-
-  // Resto (mismo origen): caché primero, luego red y se guarda una copia.
-  if (new URL(req.url).origin === location.origin) {
-    event.respondWith(
-      caches.match(req).then((cached) =>
-        cached ||
-        fetch(req).then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
-          return res;
-        }).catch(() => cached)
+  // Red primero: intenta la versión más reciente y guarda copia; si falla
+  // (sin conexión), usa la caché. Para navegaciones cae al inicio como último recurso.
+  event.respondWith(
+    fetch(req)
+      .then((res) => {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(req, copy));
+        return res;
+      })
+      .catch(() =>
+        caches.match(req).then((cached) =>
+          cached || (req.mode === 'navigate' ? caches.match('/index.html') : undefined)
+        )
       )
-    );
-  }
+  );
 });
