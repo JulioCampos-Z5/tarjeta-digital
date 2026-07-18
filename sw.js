@@ -1,7 +1,7 @@
 /* Service Worker — Zyncosoft Tarjetas Digitales
    Estrategia "red primero": con internet siempre muestra lo más reciente;
    la caché solo se usa como respaldo cuando no hay conexión. */
-const CACHE = 'zyncosoft-tarjetas-v5';
+const CACHE = 'zyncosoft-tarjetas-v6';
 
 // Recursos locales que precargamos para que las tarjetas funcionen offline.
 const ASSETS = [
@@ -51,7 +51,10 @@ self.addEventListener('fetch', (event) => {
         return res;
       })
       .catch(() =>
-        caches.match(req).then((cached) =>
+        // ignoreSearch: el HTML pide "card.js?v=5" pero en caché está "card.js"
+        // (sin query). Sin esto, offline no encontraría el script y la tarjeta
+        // quedaría sin datos.
+        caches.match(req, { ignoreSearch: true }).then((cached) =>
           cached || (req.mode === 'navigate' ? caches.match('/index.html') : undefined)
         )
       )
