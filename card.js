@@ -23,7 +23,7 @@ const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&l
 
 function iniciales(nombre) {
   const p = nombre.trim().split(/\s+/);
-  return ((p[0]?.[0] || '') + (p[1]?.[0] || '')).toUpperCase();
+  return (((p[0] && p[0][0]) || '') + ((p[1] && p[1][0]) || '')).toUpperCase();
 }
 
 function vcard(d) {
@@ -163,13 +163,13 @@ function render() {
     const btn = document.getElementById('btn-share');
     const url = location.href.split('#')[0];
     const data = { title: `${d.nombre} — ${EMPRESA}`, text: d.cargo, url };
-    if (navigator.share) { try { await navigator.share(data); } catch { } return; }
+    if (navigator.share) { try { await navigator.share(data); } catch (e) {} return; }
     try {
       await navigator.clipboard.writeText(url);
       const original = btn.textContent;
       btn.textContent = '¡Enlace copiado!';
       setTimeout(() => (btn.textContent = original), 1800);
-    } catch { }
+    } catch (e) {}
   });
 
   // Navegación entre tarjetas + año
