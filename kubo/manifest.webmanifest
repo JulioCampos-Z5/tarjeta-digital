@@ -1,0 +1,15 @@
+{
+  "id": "/kubo/",
+  "name": "Kubo — Mago Ilusionista",
+  "short_name": "Kubo",
+  "description": "Tarjeta digital de Kubo, Mago Ilusionista y Mentalista.",
+  "start_url": "/kubo/",
+  "scope": "/kubo/",
+  "display": "standalone",
+  "background_color": "#050302",
+  "theme_color": "#050302",
+  "icons": [
+    { "src": "/kubo/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/kubo/logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any" }
+  ]
+}

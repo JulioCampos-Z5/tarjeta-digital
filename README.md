@@ -3,10 +3,17 @@
 Tarjeta de presentación digital con código QR, pensada para compartir por link o escaneo.
 
 - Un solo archivo: `index.html` (sin build, sin dependencias que instalar)
-- Estilos con **Tailwind CSS vía CDN**
+- Estilos con **Tailwind CSS** (`vendor/tailwind.min.js`, autohospedado)
 - QR generado en el navegador con `qrcode.js` (apunta a la URL donde esté publicada la tarjeta)
 - Botones directos a: correo, teléfono, WhatsApp, LinkedIn y sitio web
 - Botón "Guardar contacto" que descarga un `.vcf` (vCard)
+
+## Tarjetas disponibles
+
+- `/` — Empresa (Zyncosoft)
+- `/julio/` — CEO
+- `/juan/` — Project manager
+- `/kubo/` — Tarjeta de Kubo (Mago Ilusionista), con tema propio negro y dorado, telón de apertura y efectos de partículas. No usa `card.js` (el render vive en `kubo/kubo.js`); los datos (de ejemplo) están en el bloque `window.DATOS` al inicio de `kubo/index.html`, igual que en las demás tarjetas.
 
 ## Editar mis datos
 
