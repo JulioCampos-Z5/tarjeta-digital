@@ -20,6 +20,24 @@ const iconos = {
   web: '<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 1 0 0-18m0 18a9 9 0 0 1 0-18m0 18c2.485 0 4.5-4.03 4.5-9s-2.015-9-4.5-9m0 18c-2.485 0-4.5-4.03-4.5-9s2.015-9 4.5-9M3.6 9h16.8M3.6 15h16.8"/></svg>'
 };
 
+// Servicios tal como se presentan en zyncosoft.pages.dev (sección "Qué hacemos")
+const SERVICIOS = [
+  ['Páginas web', 'Tu sitio con la información que sí importa, rápido y que se ve bien desde el celular.'],
+  ['Venta en línea', 'Tu tienda cobrando con tarjeta y transferencia, con los pedidos llegándote ordenados.'],
+  ['Catálogos digitales', 'Tus productos con foto y precio, listos para mandar por WhatsApp o redes.'],
+  ['Tarjetas digitales', 'Un link o un QR con tus datos, redes y WhatsApp. Se comparte en segundos y nunca se acaba.'],
+  ['Apps móviles', 'App para Android y iPhone para vender, levantar pedidos o revisar tu negocio desde donde estés.'],
+  ['Apps de escritorio', 'Para el trabajo pesado del mostrador o la oficina. Funciona aunque se caiga el internet.'],
+  ['ERP', 'Inventario, ventas, compras y gastos en el mismo lugar. Se acabaron los diez Excel que nunca cuadran.'],
+  ['CRM', 'Cada cliente, cotización y seguimiento en orden. Sabes a quién le toca llamada hoy.'],
+  ['Punto de venta', 'Vendes, imprimes ticket y haces el corte del día sin sacar la calculadora.'],
+  ['Cotizadores', 'Precios, descuentos e impuestos se calculan solos. Mandas un PDF con tu logo el mismo día.'],
+  ['Bases de datos', 'Diseñamos y respaldamos dónde vive tu información. Nada duplicado y nada perdido.'],
+  ['Servidores y hosting', 'Cuidamos el servidor donde vive tu sistema. Si algo falla, lo vemos antes que tú.'],
+  ['Dominios y correo', 'ventas@tuempresa.com en vez de un @gmail. Nosotros lo damos de alta y lo configuramos.'],
+  ['Consultoría', 'Revisamos cómo trabajas y te decimos qué te conviene… y qué no vale la pena.']
+];
+
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 function iniciales(nombre) {
@@ -42,6 +60,89 @@ function vcard(d) {
     `NOTE:${LEMA.replace(/[^\x20-\x7E]/g, '').trim()}`,
     'END:VCARD'
   ].filter(Boolean).join('\r\n');
+}
+
+/**
+ * Diálogo con los servicios de la empresa. Se arma una sola vez y se abre
+ * desde el botón de la tarjeta; <dialog> ya trae el cierre con Escape.
+ */
+function crearModalServicios(d) {
+  const existente = document.getElementById('modal-servicios');
+  if (existente) return existente;
+
+  const lista = SERVICIOS.map(([nombre, desc], i) =>
+    `<li class="group relative overflow-hidden rounded-2xl border border-white/10 bg-neutral-900/70 p-4 transition duration-300 hover:-translate-y-0.5 hover:border-brand-400/50 hover:bg-neutral-900">
+       <span aria-hidden class="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-500/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+       <div class="relative flex items-start gap-3">
+         <span aria-hidden class="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-brand-500/10 text-[11px] font-bold text-brand-400 ring-1 ring-inset ring-brand-500/20 font-poppins">${String(i + 1).padStart(2, '0')}</span>
+         <div class="min-w-0">
+           <p class="text-sm font-semibold text-neutral-100 font-poppins">${esc(nombre)}</p>
+           <p class="mt-1 text-[13px] leading-snug text-neutral-400">${esc(desc)}</p>
+         </div>
+       </div>
+     </li>`).join('');
+
+  const wa = d.whatsapp
+    ? `<a href="https://wa.me/${esc(d.whatsapp)}?text=${encodeURIComponent(`Hola ${EMPRESA}, vi sus servicios en la tarjeta digital y me gustaría cotizar.`)}"
+         target="_blank" rel="noopener"
+         class="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-neutral-950 transition hover:bg-brand-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 font-poppins">Cuéntanos tu caso</a>`
+    : '';
+
+  const dlg = document.createElement('dialog');
+  dlg.id = 'modal-servicios';
+  dlg.className = [
+    'w-[min(94vw,68rem)] max-h-[90vh] overflow-hidden rounded-3xl border border-white/10 p-0',
+    'bg-neutral-950 text-neutral-100 shadow-2xl shadow-black/60',
+    'backdrop:bg-black/80 backdrop:backdrop-blur-sm',
+    // La animación se reinicia sola cada vez que el diálogo deja de estar oculto
+    'animate-rise'
+  ].join(' ');
+  // El diálogo se distribuye en columna (cabecera fija, lista con scroll, pie).
+  // Va en estilos: el "display" solo puede ponerse al abrir, porque un valor
+  // en línea le ganaría a la regla del navegador que oculta el <dialog>.
+  dlg.style.flexDirection = 'column';
+  dlg.innerHTML = `
+    <div class="relative shrink-0 overflow-hidden border-b border-white/10 px-5 py-5 sm:px-7">
+      <div aria-hidden class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(255,122,26,.18),transparent_65%)]"></div>
+      <div class="relative flex items-start justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-neutral-900">
+            <img src="${BASE}logo.png" alt="" class="h-8 w-8 object-contain" />
+          </div>
+          <div class="min-w-0">
+            <p class="text-[11px] font-medium uppercase tracking-widest text-brand-400 font-poppins">${esc(EMPRESA)}</p>
+            <h2 class="text-xl font-bold tracking-tight sm:text-2xl font-poppins">Qué hacemos</h2>
+          </div>
+        </div>
+        <button id="cerrar-servicios" type="button" aria-label="Cerrar"
+          class="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-white/10 bg-neutral-900 text-neutral-400 transition hover:border-white/25 hover:text-neutral-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <p class="relative mt-3 max-w-lg text-sm text-neutral-400">
+        ${SERVICIOS.length} formas de quitarte trabajo de encima. Cada una resuelve un dolor concreto del día a día y todas se conectan entre sí.
+      </p>
+    </div>
+    <ul class="grid min-h-0 flex-1 auto-rows-max gap-3 overflow-y-auto p-5 sm:grid-cols-2 sm:px-7 lg:grid-cols-3
+      [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/15">${lista}</ul>
+    <div class="relative flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-4 sm:px-7">
+      <div aria-hidden class="pointer-events-none absolute inset-x-0 -top-10 h-10 bg-gradient-to-t from-neutral-950 to-transparent"></div>
+      <p class="text-xs text-neutral-500 font-raleway">${esc(LEMA)}</p>
+      <div class="flex flex-wrap items-center gap-2">
+        ${wa}
+        <button id="cerrar-servicios-pie" type="button"
+          class="rounded-lg border border-white/15 bg-neutral-900 px-4 py-2.5 text-sm font-semibold text-neutral-300 transition hover:bg-neutral-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 font-poppins">Cerrar</button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(dlg);
+  dlg.querySelectorAll('#cerrar-servicios, #cerrar-servicios-pie')
+    .forEach((b) => b.addEventListener('click', () => dlg.close()));
+  // Clic fuera del contenido: el propio <dialog> es el fondo
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  // Al cerrar se devuelve el display al navegador para que vuelva a ocultarlo
+  dlg.addEventListener('close', () => { dlg.style.display = ''; });
+  return dlg;
 }
 
 function boton(href, tipo, extra) {
@@ -82,15 +183,6 @@ function render() {
     d.web ? boton(d.web, 'web', 'target="_blank" rel="noopener" title="Sitio web" aria-label="Sitio web"') : ''
   ].join('');
 
-  const filas = [
-    d.correo ? ['Correo', d.correo] : null,
-    d.telefono ? ['Teléfono', d.telefono] : null,
-    d.web ? ['Web', d.web.replace(/^https?:\/\//, '')] : null
-  ].filter(Boolean).map(([k, v]) =>
-    `<div class="flex items-baseline justify-between gap-4">
-       <dt class="shrink-0 text-neutral-500">${k}</dt>
-       <dd class="min-w-0 truncate text-right font-medium text-neutral-300">${esc(v)}</dd>
-     </div>`).join('');
 
   card.innerHTML = `
     <div class="grid gap-px bg-white/5 sm:grid-cols-[1.4fr_1fr]">
@@ -106,7 +198,11 @@ function render() {
 
         <nav aria-label="Contacto" class="mt-6 flex items-center gap-2 sm:mt-7 sm:gap-3">${botones}</nav>
 
-        <dl class="mt-6 space-y-2 border-t border-white/10 pt-5 text-sm sm:mt-7">${filas}</dl>
+        <div class="mt-6 border-t border-white/10 pt-5 sm:mt-7">
+          <button id="btn-servicios" type="button"
+            class="w-full rounded-lg bg-brand-500 px-4 py-3 text-sm font-semibold text-neutral-950 transition hover:bg-brand-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300 font-poppins">
+            Servicios</button>
+        </div>
       </div>
 
       <aside class="flex min-w-0 flex-col items-center justify-center gap-4 bg-neutral-900 p-5 text-center sm:p-8">
@@ -137,6 +233,14 @@ function render() {
   } else {
     qrEl.innerHTML = '<p class="flex h-full w-full items-center justify-center p-2 text-center text-[11px] text-neutral-500">QR no disponible</p>';
   }
+
+  // Servicios
+  document.getElementById('btn-servicios').addEventListener('click', () => {
+    const dlg = crearModalServicios(d);
+    if (typeof dlg.showModal === 'function') dlg.showModal();
+    else dlg.setAttribute('open', ''); // navegadores sin <dialog> modal
+    dlg.style.display = 'flex';
+  });
 
   // Guardar contacto
   document.getElementById('btn-vcard').addEventListener('click', () => {
