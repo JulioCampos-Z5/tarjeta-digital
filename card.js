@@ -58,20 +58,6 @@ function boton(href, tipo, extra) {
     ${iconos[tipo]}</a>`;
 }
 
-function navInferior(actualId) {
-  const items = [
-    ['Empresa', BASE, 'empresa'],
-    ['CEO', BASE + 'julio/', 'julio'],
-    ['Project manager', BASE + 'juan/', 'juan']
-  ];
-  return items.map(([txt, href, id]) => {
-    const on = id === actualId;
-    return `<a href="${href}" class="${on
-      ? 'text-brand-400 font-semibold'
-      : 'text-neutral-500 hover:text-neutral-300'} transition font-poppins">${txt}</a>`;
-  }).join('<span class="text-neutral-700">·</span>');
-}
-
 function render() {
   const d = window.DATOS;
   const card = document.getElementById('card');
@@ -125,7 +111,7 @@ function render() {
 
       <aside class="flex min-w-0 flex-col items-center justify-center gap-4 bg-neutral-900 p-5 text-center sm:p-8">
         <div class="rounded-2xl bg-white p-3 shadow-xl shadow-black/40">
-          <div id="qr" class="h-32 w-32 sm:h-36 sm:w-36" role="img" aria-label="Código QR de ${esc(d.nombre)}"></div>
+          <div id="qr" class="h-40 w-40 sm:h-36 sm:w-36" role="img" aria-label="Código QR de ${esc(d.nombre)}"></div>
         </div>
         <p class="text-[11px] font-medium uppercase tracking-widest text-neutral-500 font-poppins">Escanea para abrir la tarjeta</p>
         <div class="flex w-full max-w-xs flex-col gap-2">
@@ -175,9 +161,7 @@ function render() {
     } catch (e) {}
   });
 
-  // Navegación entre tarjetas + año
-  const nav = document.getElementById('nav-cards');
-  if (nav) nav.innerHTML = navInferior(d.id || (d.tipo === 'empresa' ? 'empresa' : ''));
+  // Año del pie
   const anio = document.getElementById('anio');
   if (anio) anio.textContent = new Date().getFullYear();
 

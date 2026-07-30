@@ -1,7 +1,7 @@
 /* Service Worker — Zyncosoft Tarjetas Digitales
    Estrategia "red primero": con internet siempre muestra lo más reciente;
    la caché solo se usa como respaldo cuando no hay conexión. */
-const CACHE = 'zyncosoft-tarjetas-v7';
+const CACHE = 'zyncosoft-tarjetas-v8';
 
 // Recursos locales que precargamos para que las tarjetas funcionen offline.
 const ASSETS = [
