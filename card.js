@@ -91,7 +91,9 @@ function crearModalServicios(d) {
   const dlg = document.createElement('dialog');
   dlg.id = 'modal-servicios';
   dlg.className = [
-    'w-[min(94vw,68rem)] max-h-[90vh] overflow-hidden rounded-3xl border border-white/10 p-0',
+    // overflow-y-auto y no hidden: si el alto no alcanza (pantallas muy bajas),
+    // se desplaza el diálogo entero en lugar de recortar el pie.
+    'w-[min(94vw,68rem)] max-h-[85vh] overflow-y-auto rounded-3xl border border-white/10 p-0',
     'bg-neutral-950 text-neutral-100 shadow-2xl shadow-black/60',
     'backdrop:bg-black/80 backdrop:backdrop-blur-sm',
     // La animación se reinicia sola cada vez que el diálogo deja de estar oculto
@@ -123,7 +125,7 @@ function crearModalServicios(d) {
         ${SERVICIOS.length} formas de quitarte trabajo de encima. Cada una resuelve un dolor concreto del día a día y todas se conectan entre sí.
       </p>
     </div>
-    <ul class="grid min-h-0 flex-1 auto-rows-max gap-3 overflow-y-auto p-5 sm:grid-cols-2 sm:px-7 lg:grid-cols-3
+    <ul class="grid min-h-0 flex-auto auto-rows-max gap-3 overflow-y-auto p-5 max-h-[45vh] sm:max-h-[60vh] sm:grid-cols-2 sm:px-7 lg:grid-cols-3
       [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/15">${lista}</ul>
     <div class="relative flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-white/10 px-5 py-4 sm:px-7">
       <div aria-hidden class="pointer-events-none absolute inset-x-0 -top-10 h-10 bg-gradient-to-t from-neutral-950 to-transparent"></div>
