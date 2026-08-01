@@ -25,6 +25,7 @@ const SERVICIOS = [
   ['Páginas web', 'Tu sitio con la información que sí importa, rápido y que se ve bien desde el celular.'],
   ['Venta en línea', 'Tu tienda cobrando con tarjeta y transferencia, con los pedidos llegándote ordenados.'],
   ['Catálogos digitales', 'Tus productos con foto y precio, listos para mandar por WhatsApp o redes.'],
+  ['Menús digitales', 'El comensal escanea el QR de la mesa y ve tu carta con fotos y precios. Cambias un precio sin reimprimir nada.'],
   ['Tarjetas digitales', 'Un link o un QR con tus datos, redes y WhatsApp. Se comparte en segundos y nunca se acaba.'],
   ['Apps móviles', 'App para Android y iPhone para vender, levantar pedidos o revisar tu negocio desde donde estés.'],
   ['Apps de escritorio', 'Para el trabajo pesado del mostrador o la oficina. Funciona aunque se caiga el internet.'],
